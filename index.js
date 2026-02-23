@@ -81,3 +81,10 @@ const jobs = [
   }
 ];
 
+const container = document.getElementById("jobContainer");
+const totalCount = document.getElementById("totalCount");
+const interviewCount = document.getElementById("interviewCount");
+const rejectedCount = document.getElementById("rejectedCount");
+const jobCountText = document.getElementById("jobCountText");
+const emptyState = document.getElementById("emptyState");
+const tabs = document.querySelectorAll(".tab-btn");
