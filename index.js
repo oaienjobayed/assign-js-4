@@ -88,3 +88,87 @@ const rejectedCount = document.getElementById("rejectedCount");
 const jobCountText = document.getElementById("jobCountText");
 const emptyState = document.getElementById("emptyState");
 const tabs = document.querySelectorAll(".tab-btn");
+
+let activeTab = "all";
+
+function renderJobs() {
+  container.innerHTML = "";
+
+  const filtered = jobs.filter(job =>
+    activeTab === "all" ? true : job.status === activeTab
+  );
+
+  if (filtered.length === 0) {
+    emptyState.classList.remove("hidden");
+  } else {
+    emptyState.classList.add("hidden");
+  }
+
+  filtered.forEach(job => {
+    const card = document.createElement("div");
+    card.className = "border rounded-lg p-5 bg-gray-50";
+
+    card.innerHTML = `
+      <h3 class="font-bold">${job.company}</h3>
+      <p class="text-sm text-gray-600">${job.position}</p>
+      <p class="text-sm text-gray-500 mt-1">
+        ${job.location} . ${job.type} . ${job.salary}
+      </p>
+
+      <p class="text-sm text-gray-500 mt-3">
+        ${job.description}
+      </p>
+
+      <div class="flex gap-3 mt-4">
+        <button onclick="updateStatus(${job.id}, 'interview')" 
+          class="px-3 py-1 text-sm border border-green-500 text-green-600 rounded">
+          Interview
+        </button>
+
+        <button onclick="updateStatus(${job.id}, 'rejected')" 
+          class="px-3 py-1 text-sm border border-red-500 text-red-600 rounded">
+          Rejected
+        </button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateDashboard();
+}
+
+function updateStatus(id, newStatus) {
+  const job = jobs.find(j => j.id === id);
+
+  if (job.status === newStatus) {
+    job.status = "all";
+  } else {
+    job.status = newStatus;
+  }
+
+  renderJobs();
+}
+
+function updateDashboard() {
+  totalCount.textContent = jobs.length;
+  interviewCount.textContent = jobs.filter(j => j.status === "interview").length;
+  rejectedCount.textContent = jobs.filter(j => j.status === "rejected").length;
+  jobCountText.textContent = `${jobs.length} jobs`;
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    activeTab = tab.dataset.tab;
+
+    tabs.forEach(t => {
+      t.classList.remove("bg-blue-600", "text-white");
+      t.classList.add("bg-blue-600");
+    });
+
+    tab.classList.add("bg-blue-600", "text-white");
+    renderJobs();
+  });
+});
+
+renderJobs();
